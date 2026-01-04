@@ -45,6 +45,28 @@ lake build
 - `List.exists_neg_of_sum_neg` - If sum of non-positive values is negative, some element is negative
 - `List.exists_ne_zero_of_sum_ne_zero` - If sum is nonzero with same-sign elements, some element is nonzero
 
+### Key-Based Operations
+Operations for lists where elements have a key accessor, supporting the common "upsert" pattern.
+
+- `List.upsertBy` - Update element matching key, or append default if not found
+- `List.updateBy` - Update element matching key (no-op if not found)
+- `List.findBy?` - Find element by key accessor
+- `List.containsBy` - Check if element with key exists
+
+Example:
+```lean
+structure User where
+  id : Nat
+  name : String
+
+def users : List User := [{ id := 1, name := "Alice" }]
+
+-- Update user 1's name, or add new user if not found
+let updated := users.upsertBy (·.id) 1
+  (fun u => { u with name := "Alicia" })
+  { id := 1, name := "Default" }
+```
+
 ## License
 
 Apache 2.0

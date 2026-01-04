@@ -139,4 +139,31 @@ theorem exists_ne_zero_of_sum_ne_zero (l : List α) (f : α → ℚ)
     obtain ⟨x, hx, hfx⟩ := exists_neg_of_sum_neg l f hnonpos hneg
     exact ⟨x, hx, ne_of_lt hfx⟩
 
+/-! ## Key-Based Operations
+
+These operations work on lists where elements have a key accessor,
+supporting the common "upsert" pattern (update or insert). -/
+
+variable {κ : Type*} [BEq κ]
+
+/-- Update the first element matching a key, or append a default if not found.
+    This is the "upsert" pattern for lists with a key accessor. -/
+def upsertBy (key : α → κ) (k : κ) (update : α → α) (default : α) (l : List α) : List α :=
+  if l.any (fun x => key x == k) then
+    l.map (fun x => if key x == k then update x else x)
+  else
+    l ++ [default]
+
+/-- Update the first element matching a key. No-op if key not found. -/
+def updateBy (key : α → κ) (k : κ) (update : α → α) (l : List α) : List α :=
+  l.map (fun x => if key x == k then update x else x)
+
+/-- Find an element by key accessor. -/
+def findBy? (key : α → κ) (k : κ) (l : List α) : Option α :=
+  l.find? (fun x => key x == k)
+
+/-- Check if an element with the given key exists. -/
+def containsBy (key : α → κ) (k : κ) (l : List α) : Bool :=
+  l.any (fun x => key x == k)
+
 end List
