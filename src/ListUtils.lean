@@ -5,34 +5,6 @@ import Mathlib.Tactic.Abel
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
-/-!
-# List Utilities
-
-Additional lemmas for `List` operations that complement Mathlib.
-
-These lemmas fill gaps in Mathlib's List module - specifically around
-sum operations with negation and subtraction that exist for `Multiset`
-and `Finset` but not for `List`.
-
-## Main Results
-
-* `List.sum_map_neg` - Sum of negated elements equals negation of sum
-* `List.sum_map_sub` - Sum distributes over subtraction in mapped function
-* `List.sum_mul_left` - Scalar multiplication distributes into sum
-* `List.exists_pos_of_sum_pos` - Positive sum implies existence of positive element
-* `List.exists_neg_of_sum_neg` - Negative sum implies existence of negative element
-
-## Usage
-
-```lean
-import ListUtils
-
-example (l : List Nat) (f : Nat → ℚ) :
-    (l.map (fun x => -f x)).sum = -(l.map f).sum :=
-  List.sum_map_neg l f
-```
--/
-
 namespace List
 
 variable {α : Type*}
