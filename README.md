@@ -12,7 +12,7 @@ Add to your `lakefile.lean`:
 
 ```lean
 require «list-utils» from git
-  "https://github.com/sdiehl/list-utils.git" @ "main"
+  "https://github.com/sdiehl/list-utils.git" @ "v1.0.0"
 ```
 
 Then run:
