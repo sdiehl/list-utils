@@ -40,6 +40,11 @@ lake build
 - `List.sum_map_const` - Sum of constant function
 - `List.sum_map_append` - Sum over appended lists
 
+### Existence Lemmas
+- `List.exists_pos_of_sum_pos` - If sum of non-negative values is positive, some element is positive
+- `List.exists_neg_of_sum_neg` - If sum of non-positive values is negative, some element is negative
+- `List.exists_ne_zero_of_sum_ne_zero` - If sum is nonzero with same-sign elements, some element is nonzero
+
 ## License
 
 Apache 2.0
