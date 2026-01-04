@@ -1,6 +1,8 @@
 import Mathlib.Algebra.BigOperators.Group.List.Basic
 import Mathlib.Algebra.BigOperators.GroupWithZero.Action
+import Mathlib.Algebra.Order.BigOperators.Group.List
 import Mathlib.Tactic.Abel
+import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
 /-!
@@ -17,6 +19,8 @@ and `Finset` but not for `List`.
 * `List.sum_map_neg` - Sum of negated elements equals negation of sum
 * `List.sum_map_sub` - Sum distributes over subtraction in mapped function
 * `List.sum_mul_left` - Scalar multiplication distributes into sum
+* `List.exists_pos_of_sum_pos` - Positive sum implies existence of positive element
+* `List.exists_neg_of_sum_neg` - Negative sum implies existence of negative element
 
 ## Usage
 
@@ -85,7 +89,7 @@ theorem sum_mul_right (l : List α) (c : ℚ) (f : α → ℚ) :
   rw [mul_comm, sum_mul_left]
   congr 1
   ext x
-  ring
+  ring_nf
 
 /-! ## Additional Utilities -/
 
@@ -100,5 +104,67 @@ theorem sum_map_const (l : List α) (c : ℚ) :
 theorem sum_map_append (l₁ l₂ : List α) (f : α → ℚ) :
     ((l₁ ++ l₂).map f).sum = (l₁.map f).sum + (l₂.map f).sum := by
   simp [List.map_append]
+
+/-! ## Existence Lemmas -/
+
+/-- If sum of mapped non-negative values is positive, some element maps to positive. -/
+theorem exists_pos_of_sum_pos (l : List α) (f : α → ℚ)
+    (hnonneg : ∀ x ∈ l, 0 ≤ f x) (hpos : 0 < (l.map f).sum) :
+    ∃ x ∈ l, 0 < f x := by
+  by_contra hall
+  push_neg at hall
+  have hzero : ∀ x ∈ l, f x = 0 := fun x hx => le_antisymm (hall x hx) (hnonneg x hx)
+  have hsum_zero : (l.map f).sum = 0 := by
+    have heq : l.map f = l.map (fun _ => (0 : ℚ)) := List.map_congr_left hzero
+    rw [heq]
+    simp only [List.map_const', List.sum_replicate, nsmul_eq_mul, mul_zero]
+  linarith
+
+/-- If sum of mapped non-positive values is negative, some element maps to negative. -/
+theorem exists_neg_of_sum_neg (l : List α) (f : α → ℚ)
+    (hnonpos : ∀ x ∈ l, f x ≤ 0) (hneg : (l.map f).sum < 0) :
+    ∃ x ∈ l, f x < 0 := by
+  by_contra hall
+  push_neg at hall
+  have hzero : ∀ x ∈ l, f x = 0 := fun x hx => le_antisymm (hnonpos x hx) (hall x hx)
+  have hsum_zero : (l.map f).sum = 0 := by
+    have heq : l.map f = l.map (fun _ => (0 : ℚ)) := List.map_congr_left hzero
+    rw [heq]
+    simp only [List.map_const', List.sum_replicate, nsmul_eq_mul, mul_zero]
+  linarith
+
+/-- If sum is nonzero and all elements have the same sign, some element is nonzero. -/
+theorem exists_ne_zero_of_sum_ne_zero (l : List α) (f : α → ℚ)
+    (hsamesign : (∀ x ∈ l, 0 ≤ f x) ∨ (∀ x ∈ l, f x ≤ 0))
+    (hne : (l.map f).sum ≠ 0) :
+    ∃ x ∈ l, f x ≠ 0 := by
+  rcases hsamesign with hnonneg | hnonpos
+  · have hpos : 0 < (l.map f).sum := by
+      rcases lt_trichotomy 0 (l.map f).sum with h | h | h
+      · exact h
+      · exact absurd h.symm hne
+      · have hle : (l.map f).sum ≤ 0 := le_of_lt h
+        have hge : 0 ≤ (l.map f).sum := List.sum_nonneg (fun x hx => by
+          rw [List.mem_map] at hx
+          obtain ⟨a, ha, rfl⟩ := hx
+          exact hnonneg a ha)
+        exact absurd (le_antisymm hle hge) hne
+    obtain ⟨x, hx, hfx⟩ := exists_pos_of_sum_pos l f hnonneg hpos
+    exact ⟨x, hx, ne_of_gt hfx⟩
+  · -- For nonpositive case, use negation to reduce to nonneg case
+    have hneg : (l.map f).sum < 0 := by
+      by_contra hnneg
+      push_neg at hnneg
+      have hle : (l.map f).sum ≤ 0 := by
+        have hneg_nonneg : 0 ≤ (l.map (fun x => -f x)).sum := List.sum_nonneg (fun x hx => by
+          rw [List.mem_map] at hx
+          obtain ⟨a, ha, rfl⟩ := hx
+          exact neg_nonneg.mpr (hnonpos a ha))
+        have heq : (l.map (fun x => -f x)).sum = -(l.map f).sum := sum_map_neg l f
+        rw [heq] at hneg_nonneg
+        linarith
+      exact hne (le_antisymm hle hnneg)
+    obtain ⟨x, hx, hfx⟩ := exists_neg_of_sum_neg l f hnonpos hneg
+    exact ⟨x, hx, ne_of_lt hfx⟩
 
 end List
