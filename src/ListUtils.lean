@@ -170,4 +170,28 @@ def containsBy (key : α → κ) (k : κ) (l : List α) : Bool :=
 def removeBy (key : α → κ) (k : κ) (l : List α) : List α :=
   l.filter (fun x => key x != k)
 
+/-! ## Counting and Aggregation -/
+
+/-- Count elements satisfying a predicate. -/
+def countBy (p : α → Bool) (l : List α) : Nat :=
+  l.filter p |>.length
+
+/-- Find element with maximum value according to a comparison function.
+    Returns none for empty lists. -/
+def maxByOpt (cmp : α → α → Ordering) (l : List α) : Option α :=
+  l.foldl (fun acc x => match acc with
+    | none => some x
+    | some best => if cmp x best == .gt then some x else some best
+  ) none
+
+/-! ## Pair List Operations -/
+
+variable {β : Type*}
+
+/-- Extract first elements from a list of pairs. -/
+def keysOf (l : List (α × β)) : List α := l.map (·.1)
+
+/-- Extract second elements from a list of pairs. -/
+def valuesOf (l : List (α × β)) : List β := l.map (·.2)
+
 end List

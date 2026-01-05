@@ -12,7 +12,7 @@ Add to your `lakefile.lean`:
 
 ```lean
 require «list-utils» from git
-  "https://github.com/sdiehl/list-utils.git" @ "v1.2.0"
+  "https://github.com/sdiehl/list-utils.git" @ "v1.3.0"
 ```
 
 Then run:
@@ -53,6 +53,14 @@ Operations for lists where elements have a key accessor, supporting the common "
 - `List.findBy?` - Find element by key accessor
 - `List.containsBy` - Check if element with key exists
 - `List.removeBy` - Remove all elements where key matches
+
+### Counting and Aggregation
+- `List.countBy` - Count elements satisfying a predicate
+- `List.maxByOpt` - Find element with maximum value by comparator
+
+### Pair List Operations
+- `List.keysOf` - Extract first elements from list of pairs
+- `List.valuesOf` - Extract second elements from list of pairs
 
 Example:
 ```lean
