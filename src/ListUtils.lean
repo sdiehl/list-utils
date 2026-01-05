@@ -166,4 +166,8 @@ def findBy? (key : α → κ) (k : κ) (l : List α) : Option α :=
 def containsBy (key : α → κ) (k : κ) (l : List α) : Bool :=
   l.any (fun x => key x == k)
 
+/-- Remove all elements where key matches the given value. -/
+def removeBy (key : α → κ) (k : κ) (l : List α) : List α :=
+  l.filter (fun x => key x != k)
+
 end List

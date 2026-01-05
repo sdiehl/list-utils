@@ -12,7 +12,7 @@ Add to your `lakefile.lean`:
 
 ```lean
 require «list-utils» from git
-  "https://github.com/sdiehl/list-utils.git" @ "v1.1.0"
+  "https://github.com/sdiehl/list-utils.git" @ "v1.2.0"
 ```
 
 Then run:
@@ -52,6 +52,7 @@ Operations for lists where elements have a key accessor, supporting the common "
 - `List.updateBy` - Update element matching key (no-op if not found)
 - `List.findBy?` - Find element by key accessor
 - `List.containsBy` - Check if element with key exists
+- `List.removeBy` - Remove all elements where key matches
 
 Example:
 ```lean
