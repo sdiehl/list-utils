@@ -2,7 +2,7 @@ import Lake
 open Lake DSL
 
 package «list-utils» where
-  version := v!"1.3.0"
+  version := v!"1.4.0"
   leanOptions := #[
     ⟨`autoImplicit, false⟩,
     ⟨`relaxedAutoImplicit, false⟩
