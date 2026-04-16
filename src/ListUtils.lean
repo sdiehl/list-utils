@@ -1,9 +1,13 @@
-import Mathlib.Algebra.BigOperators.Group.List.Basic
-import Mathlib.Algebra.BigOperators.GroupWithZero.Action
-import Mathlib.Algebra.Order.BigOperators.Group.List
-import Mathlib.Tactic.Abel
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Ring
+module
+
+public import Mathlib.Algebra.BigOperators.Group.List.Basic
+public import Mathlib.Algebra.BigOperators.GroupWithZero.Action
+public import Mathlib.Algebra.Order.BigOperators.Group.List
+public import Mathlib.Tactic.Abel
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.Ring
+
+@[expose] public section
 
 namespace List
 
@@ -195,3 +199,5 @@ def keysOf (l : List (α × β)) : List α := l.map (·.1)
 def valuesOf (l : List (α × β)) : List β := l.map (·.2)
 
 end List
+
+end
